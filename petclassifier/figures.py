@@ -1,9 +1,11 @@
+import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 
-def event_scheme():
+
+def event_scheme(path):
     fig, ax = plt.subplots()
     evts = 11
 
@@ -41,5 +43,28 @@ def event_scheme():
     plt.axis('equal')
     plt.axis('off')
     plt.tight_layout()
+    plt.savefig(path+'/event_scheme.pdf', bbox_inches='tight')
 
-    plt.show()
+
+
+def plot_variables(var, back_to_back, three_gamma, phantom_scatt, det_scatt, prompt):
+    sns.distplot(back_to_back[var], color="red", label="2g")
+    sns.distplot(three_gamma[var], color="blue", label="3g")
+    sns.distplot(phantom_scatt[var], color="green", label="phantom scatt")
+    sns.distplot(det_scatt[var], color="c", label="det scatt")
+    sns.distplot(prompt[var], color="skyblue", label="prompt")
+
+def plot_comparison(path, back_to_back, three_gamma, phantom_scatt, det_scatt, prompt):
+    plt.figure(figsize=(16, 6))
+    plt.subplot(3, 2, 1)
+    plot_variables("energy",back_to_back, three_gamma, phantom_scatt, det_scatt, prompt)
+    plt.subplot(3, 2, 2)
+    plot_variables("time",back_to_back, three_gamma, phantom_scatt, det_scatt, prompt)
+    plt.subplot(3, 2, 3)
+    plot_variables("hitX",back_to_back, three_gamma, phantom_scatt, det_scatt, prompt)
+    plt.subplot(3, 2, 4)
+    plot_variables("hitY",back_to_back, three_gamma, phantom_scatt, det_scatt, prompt)
+    plt.subplot(3, 2, 5)
+    plot_variables("hitZ",back_to_back, three_gamma, phantom_scatt, det_scatt, prompt)
+    plt.legend(loc=(1.5,0))
+    plt.savefig(path+'/variables_comparison.pdf', bbox_inches='tight')

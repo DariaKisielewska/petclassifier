@@ -9,6 +9,6 @@ setup(name='petclassifier',
         license='MIT',
         packages=['petclassifier'],
         install_requires=[
-            'uproot','numpy','matplotlib','tensorflow','pandas'
+            'uproot','numpy','matplotlib','tensorflow','pandas','seaborn','sklearn'
             ],
         zip_safe=False)

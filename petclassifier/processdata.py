@@ -83,3 +83,39 @@ def prepare_mc_sliding_window(tree, evts_in_half_window, num_of_categories):
     print("--- data manipulations :  %s seconds ---" % (time_end-time_process))
 
     return out_features, out_results
+
+
+def get_df_raw_data(tree, num_of_categories):
+    ''' Function returns raw data divided into categories. 
+    Please provide:
+    - ROOT tree
+    - number of categories
+    - normalization values used in ML sample (x_min, x_max)
+    '''
+
+    time_start = time.time()
+
+    # get features and result from ROOT's tree. Parameters are fixed for now.
+    raw_data = tree.pandas.df(
+        ["fMCHits.fTime", "fMCHits.fEneDep", "fMCHits.fPosition", "fMCHits.fGenGammaMultiplicity"]).dropna(axis=0)
+
+    time_process = time.time()
+    raw_data = raw_data.rename(columns={"fMCHits.fTime": "time", "fMCHits.fEneDep": "energy",
+                                        "fMCHits.fPosition.fX": "hitX",
+                                        "fMCHits.fPosition.fY": "hitY",
+                                        "fMCHits.fPosition.fZ": "hitZ",
+                                        "fMCHits.fGenGammaMultiplicity": "category"})
+
+    prompt = raw_data.loc[lambda raw_data: raw_data["category"] == 1, :]
+    back_to_back = raw_data.loc[lambda raw_data: raw_data["category"] == 2, :]
+    three_gamma = raw_data.loc[lambda raw_data: raw_data["category"] == 3, :]
+    phantom_scatt = raw_data.loc[lambda raw_data: raw_data["category"] == 0, :]
+    det_scatt = raw_data.loc[lambda raw_data: raw_data["category"] > 10, :]
+
+    time_end = time.time()
+
+    print("--- load from file     :  %s seconds ---" %
+          (time_process-time_start))
+    print("--- data manipulations :  %s seconds ---" % (time_end-time_process))
+
+    return prompt, back_to_back, three_gamma, phantom_scatt, det_scatt 
